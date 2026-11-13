@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>盲走迷宫 · 双人对决</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-mark">迷</div>
+    <div>
+      <div class="eyebrow">TWO-PLAYER ONLINE GAME</div>
+      <h1>盲走迷宫</h1>
+    </div>
+    <div class="header-note">12 × 12 · 双人对决</div>
+  </header>
+
+  <main class="app-shell">
+    <section id="lobby" class="panel lobby-panel">
+      <div class="hero-copy">
+        <div class="eyebrow">MAKE YOUR MAZE. HIDE IT. WIN.</div>
+        <h2>你造迷宫，我来闯。</h2>
+        <p>两个人各自布置墙壁，再进入对方的迷宫。看不见前方，只能一步一步试出来。</p>
+      </div>
+
+      <div class="lobby-grid">
+        <form id="create-form" class="action-card">
+          <div class="card-icon">＋</div>
+          <h3>创建房间</h3>
+          <p>创建新房间，邀请朋友加入。</p>
+          <label for="create-name">你的昵称</label>
+          <input id="create-name" maxlength="16" placeholder="例如：迷宫大师" autocomplete="nickname">
+          <button class="primary-button" type="submit">创建房间</button>
+        </form>
+
+        <form id="join-form" class="action-card">
+          <div class="card-icon">↗</div>
+          <h3>加入房间</h3>
+          <p>输入朋友分享给你的房间号码。</p>
+          <label for="join-name">你的昵称</label>
+          <input id="join-name" maxlength="16" placeholder="例如：不迷路选手" autocomplete="nickname">
+          <label for="join-code">房间号码</label>
+          <input id="join-code" maxlength="5" placeholder="例如：A7K2P" class="code-input" autocomplete="off">
+          <button class="primary-button" type="submit">加入房间</button>
+        </form>
+      </div>
+      <div class="rules-strip">
+        <div><b>01</b><span>60秒布置迷宫</span></div>
+        <div><b>02</b><span>轮流盲走</span></div>
+        <div><b>03</b><span>先到终点获胜</span></div>
+      </div>
+    </section>
+
+    <section id="room" class="room-view" hidden>
+      <div class="room-topbar panel">
+        <div>
+          <div class="eyebrow">ROOM CODE</div>
+          <div class="room-code-line"><strong id="room-code">-----</strong><button id="copy-code" class="small-button" type="button">复制</button></div>
+        </div>
+        <div class="room-top-right">
+          <span id="connection-pill" class="connection-pill">连接中</span>
+          <button id="leave-room" class="text-button" type="button">关闭房间</button>
+        </div>
+      </div>
+
+      <div class="players-bar">
+        <div class="player-chip"><span class="player-dot you-dot"></span><div><small>你</small><strong id="me-name">玩家</strong></div><em id="me-status">在线</em></div>
+        <div class="versus">VS</div>
+        <div class="player-chip"><span class="player-dot opponent-dot"></span><div><small>对手</small><strong id="opponent-name">等待加入</strong></div><em id="opponent-status">未加入</em></div>
+      </div>
+
+      <section id="waiting-panel" class="panel message-panel" hidden>
+        <div class="waiting-spinner"></div>
+        <h2>等待另一位玩家加入</h2>
+        <p>把上方房间号码发给朋友。两人都进入后，60秒构筑阶段就会开始。</p>
+      </section>
+
+      <section id="play-panel" class="panel play-panel" hidden>
+        <div class="phase-heading">
+          <div>
+            <div id="phase-kicker" class="eyebrow">MAZE SETUP</div>
+            <h2 id="phase-title">构筑你的迷宫</h2>
+            <p id="phase-description">点击格子放置墙壁，再次点击可以移除。</p>
+          </div>
+          <div class="timer-box"><small id="timer-label">剩余时间</small><strong id="timer">01:00</strong></div>
+        </div>
+
+        <div id="notice" class="notice" aria-live="polite">起点是绿色的 S，终点是红色的 G。</div>
+        <div id="board-area" class="board-area"></div>
+
+        <div id="setup-controls" class="setup-controls">
+          <div class="legend"><span class="legend-item"><i class="legend-start"></i>起点</span><span class="legend-item"><i class="legend-goal"></i>终点</span><span class="legend-item"><i class="legend-wall"></i>墙壁</span></div>
+          <button id="ready-button" class="primary-button ready-button" type="button">已准备就绪</button>
+          <p id="ready-hint" class="subtle-hint">双方都准备好后，立即开始游戏。</p>
+        </div>
+
+        <div id="move-controls" class="move-controls" hidden>
+          <div class="move-help">点击相邻格子，或使用方向按钮移动一格。</div>
+          <div class="direction-pad">
+            <span></span><button data-direction="up" aria-label="向上">↑</button><span></span>
+            <button data-direction="left" aria-label="向左">←</button><span class="pad-center">MOVE</span><button data-direction="right" aria-label="向右">→</button>
+            <span></span><button data-direction="down" aria-label="向下">↓</button><span></span>
+          </div>
+        </div>
+
+        <section id="result-panel" class="result-panel" hidden>
+          <div class="result-heading"><div class="eyebrow">GAME OVER</div><h2 id="result-title">游戏结束</h2><p id="result-description"></p></div>
+          <div id="reveal-mazes" class="reveal-mazes"></div>
+          <button id="back-to-lobby" class="secondary-button" type="button">返回大厅</button>
+        </section>
+      </section>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <footer>盲走迷宫 · 好友对局 · 请把房间号码分享给你的对手</footer>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/client.js"></script>
+</body>
+</html>
